@@ -18,7 +18,7 @@
 
 - name: stop cluster resource
   shell: >
-    crm resource status {{ item.name }} || crm configure stop {{ item.name }}
+    crm resource status {{ item.name }} || crm resource stop {{ item.name }}
   with_items: "{{ pacemaker_resources }}"
 
 - name: delete cluster resource
@@ -30,6 +30,11 @@
   shell: >
     crm resource status {{ item.name }} || crm configure primitive {{ item.name }} {{ item.string }}
   with_items: "{{ pacemaker_resources }}"
+
+- name: delete cluster colocation
+  shell: >
+    crm configure delete {{ item.name }}
+  with_items: "{{ pacemaker_resources_colocation }}"
 
 - name: create cluster resource colocation
   shell: >

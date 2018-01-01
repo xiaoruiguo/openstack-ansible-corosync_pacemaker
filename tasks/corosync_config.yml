@@ -17,7 +17,18 @@
     backup: True
 
 - name: append START
-  shell: "sed -i '$a START=yes' /etc/default/corosync"
+  lineinfile: 
+    #ansible version < 2.3
+    dest: /etc/default/corosync
+    #ansible version >= 2.3
+    #path: /etc/default/corosync 
+    insertafter: EOF
+    line: "START=yes" 
+    state: present
+
+
+#- name: append START
+#  shell: "sed -i '$a START=yes' /etc/default/corosync"
 
 #- name: restart corosync
 #  notify: 
