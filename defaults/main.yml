@@ -23,13 +23,13 @@ pacemaker_haproxy_name: "haproxy"
 pacemaker_resources_colocation_name: "vip-haproxy"
 
 pacemaker_resources:
-  - name: {{ pacemaker_external_vip_name }}
-    string: "ocf:heartbeat:IPaddr2 params ip={{ haproxy_keepalived_external_vip_cidr }} cidr_netmask=24 nic={{ haproxy_keepalived_external_interface }} op monitor interval=10s"
-  - name: {{ pacemaker_internal_vip_name }}
-    string: "ocf:heartbeat:IPaddr2 params ip={{ haproxy_keepalived_internal_vip_cidr }} cidr_netmask=24 nic={{ haproxy_keepalived_internal_interface }} op monitor interval=10s"
-  - name: {{ pacemaker_haproxy_name }}
+  - name: "{{ pacemaker_external_vip_name }}"
+    string: "ocf:heartbeat:IPaddr2 params ip={{ external_lb_vip_address }} cidr_netmask=24 nic={{ haproxy_keepalived_external_interface }} op monitor interval=10s"
+  - name: "{{ pacemaker_internal_vip_name }}"
+    string: "ocf:heartbeat:IPaddr2 params ip={{ internal_lb_vip_address }} cidr_netmask=24 nic={{ haproxy_keepalived_internal_interface }} op monitor interval=10s"
+  - name: "{{ pacemaker_haproxy_name }}"
     string: "ocf:heartbeat:haproxy op monitor interval=10s"
 
 pacemaker_resources_colocation:
-  - name: {{ pacemaker_resources_colocation_name }}
+  - name: "{{ pacemaker_resources_colocation_name }}"
     string: "inf: {{ pacemaker_external_vip_name }} {{ pacemaker_internal_vip_name }} {{ pacemaker_haproxy_name }} "
