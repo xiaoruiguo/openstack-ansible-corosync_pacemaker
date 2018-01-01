@@ -1,1 +1,2 @@
-openstack-ansible ...
+openstack-ansible corosync-pacemaker-install.ym
+
