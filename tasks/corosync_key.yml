@@ -1,0 +1,18 @@
+---
+- name: install haveged for generate key
+  apt: name=haveged state=present
+
+- name: generate key
+  shell: corosync-keygen
+
+- name: purge install haveged
+  apt: name=haveged state=absent
+
+- name: Store haveged key
+  slurp:
+    src: "{{ haveged_key }}"
+  register: _haveged_key
+
+  - name: Register a fact for the auth key
+  set_fact:
+    haveged_auth_key_fact: "{{ _haveged_key.content }}"

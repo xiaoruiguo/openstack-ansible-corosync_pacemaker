@@ -1,0 +1,30 @@
+totem { 
+	version: 2
+	secauth: off
+	#cluster_name: pacemaker1
+	transport: udpu
+
+	interface {
+		ringnumber: 0
+		bindnetaddr: {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
+		broadcast: yes
+		mcastport: 5404
+	}
+}
+
+nodelist {
+{% for n in ansible_play_hosts %}
+	node { 
+		ring0_addr: {{ hostvars[n]['ansible_br_mgmt']['ipv4']['address'] }}
+		nodeid: {{ loop.index }}
+		name: {{ hostvars[n]['inventory_hostname'] }}
+	}
+{% endfor %}
+}
+
+quorum {
+        provider: corosync_votequorum
+        wait_for_all: 1
+        last_man_standing: 1
+        last_man_standing_window: 10000
+}

@@ -1,0 +1,11 @@
+---
+- name: Distribute auth key
+  copy:
+    dest: "{{ haveged_key }}"
+    content: "{{ hostvars[ansible_play_hosts[0]]['haveged_auth_key_fact'] | b64decode }}"
+    mode: "0400"
+  when: hostvars[ansible_play_hosts[0]]['haveged_auth_key_fact'] is defined
+#  notify:
+#    - regen pem
+#  tags:
+#    - haproxy-ssl

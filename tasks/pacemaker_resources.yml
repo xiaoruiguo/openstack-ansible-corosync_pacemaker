@@ -1,0 +1,27 @@
+---
+- name: Check if cluster was ready
+  shell: >
+    crm status | grep "Current DC: NONE"
+  register: cluster_status
+  retries: 10
+  delay: 5
+  until: cluster_status.rc != 0
+  failed_when: False
+
+- name: setting up cluster properties
+  shell: >
+    crm configure property {{ pacemaker_cluster_properties_string }}
+
+- name: enable resource stickiness
+  command: >
+    crm configure rsc_defaults resource-stickiness={{ resource_stickiness_value }}
+
+- name: create cluster resource
+  shell: >
+    crm resource status {{ item.name }} || crm configure primitive {{ item.name }} {{ item.string }}
+  with_items: "{{ pacemaker_resources }}"
+
+- name: create cluster resource colocation
+  shell: >
+    crm configure colocation {{ item.name }} {{ item.string }}
+  with_items: "{{ pacemaker_resources_colocation }}"

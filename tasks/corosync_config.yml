@@ -1,0 +1,28 @@
+---
+- name: Drop corosync.conf
+  template:
+    src: "corosync.conf.j2"
+    dest: "/etc/corosync/corosync.conf"
+    backup: True
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart corosync
+
+- name: Enabled corosync service
+  replace:
+    dest: "/etc/default/corosync"
+    regexp: "^START\ ?=\ ?no"
+    replace: "START=yes"
+    backup: True
+
+- name: append START
+  shell: "sed -i '$a START=yes' /etc/default/corosync"
+
+- name: notify corosync
+  notify: restart corosync
+
+#- name: enable service
+#  service: name=corosync enabled=yes
+
+#- meta: flush_handlers

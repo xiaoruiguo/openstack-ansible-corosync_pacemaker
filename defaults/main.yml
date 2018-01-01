@@ -1,0 +1,35 @@
+---
+haveged_key: /etc/corosync/authkey
+resources_string: []
+ha_corosync_active_node: groups['controller'][0]
+corosync_service_name: "corosync"
+pacemaker_service_name: "pacemaker"
+pacemaker_cluster_properties:
+  - pe-warn-series-max: 1000
+  - pe-input-series-max: 1000
+  - pe-error-series-max: 1000
+  - cluster-recheck-interval: "5min"
+  - stonith-enabled: "false"
+  - no-quorum-policy: "ignore"
+
+pacemaker_primary_node: "{{ hostvars[groups['controller'][0]]['ansible_hostname'] }}"
+
+resource_stickiness_value: 100
+pacemaker_cluster_properties_string: "{% for item in pacemaker_cluster_properties %}{% for key, value in item.items() %}{{ key }}=\"{{ value }}\" {% endfor %}{% endfor %}"
+
+pacemaker_external_vip_name: "exvip"
+pacemaker_internal_vip_name: "invip"
+pacemaker_haproxy_name: "haproxy"
+pacemaker_resources_colocation_name: "vip-haproxy"
+
+pacemaker_resources:
+  - name: {{ pacemaker_external_vip_name }}
+    string: "ocf:heartbeat:IPaddr2 params ip={{ haproxy_keepalived_external_vip_cidr }} cidr_netmask=24 nic={{ haproxy_keepalived_external_interface }} op monitor interval=10s"
+  - name: {{ pacemaker_internal_vip_name }}
+    string: "ocf:heartbeat:IPaddr2 params ip={{ haproxy_keepalived_internal_vip_cidr }} cidr_netmask=24 nic={{ haproxy_keepalived_internal_interface }} op monitor interval=10s"
+  - name: {{ pacemaker_haproxy_name }}
+    string: "ocf:heartbeat:haproxy op monitor interval=10s"
+
+pacemaker_resources_colocation:
+  - name: {{ pacemaker_resources_colocation_name }}
+    string: "inf: {{ pacemaker_external_vip_name }} {{ pacemaker_internal_vip_name }} {{ pacemaker_haproxy_name }} "

@@ -1,0 +1,12 @@
+---
+- name: Creates directory
+  file:
+    path: /etc/corosync/service.d
+    state: directory
+#    owner: www-data
+#    group: www-data
+#    mode: 0775
+    recurse: yes
+
+- name: distribute pcmk
+  template: src=pcmk.j2 dest=/etc/corosync/service.d/pcmk force=yes
