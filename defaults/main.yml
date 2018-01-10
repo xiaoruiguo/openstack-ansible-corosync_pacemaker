@@ -14,6 +14,9 @@ pacemaker_cluster_properties:
 
 pacemaker_primary_node: "{{ hostvars[groups['controller'][0]]['ansible_hostname'] }}"
 
+cluster_agent_haproxy_url: "https://raw.githubusercontent.com/thisismitch/cluster-agents/master/haproxy"
+cluster_agent_dest: "/usr/lib/ocf/resource.d/heartbeat/haproxy"
+
 resource_stickiness_value: 100
 pacemaker_cluster_properties_string: "{% for item in pacemaker_cluster_properties %}{% for key, value in item.items() %}{{ key }}=\"{{ value }}\" {% endfor %}{% endfor %}"
 
