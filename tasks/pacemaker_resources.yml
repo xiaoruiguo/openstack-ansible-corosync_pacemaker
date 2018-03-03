@@ -25,6 +25,7 @@
   shell: >
     crm resource status {{ item.name }} || crm configure delete {{ item.name }}
   with_items: "{{ pacemaker_resources }}"
+  ignore_errors: yes
 
 - name: create cluster resource
   shell: >
@@ -35,6 +36,7 @@
   shell: >
     crm configure delete {{ item.name }}
   with_items: "{{ pacemaker_resources_colocation }}"
+  ignore_errors: yes
 
 - name: create cluster resource colocation
   shell: >
