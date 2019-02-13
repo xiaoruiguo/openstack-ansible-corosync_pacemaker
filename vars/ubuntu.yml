@@ -1,6 +1,7 @@
 ---
 corosync_pacemaker_apt_packages:
   - pacemaker
+  - crmsh
 #  - haveged
 #  - corosync
 #  - fence-agents
